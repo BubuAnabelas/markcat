@@ -1,0 +1,67 @@
+{
+  "name": "markcat",
+  "version": "0.1.0",
+  "description": "👓 Terminal Markdown viewer.",
+  "main": "dist/index.js",
+  "source": "src/index.js",
+  "bin": {
+    "markcat": "dist/cli.js"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "markdown",
+    "markup",
+    "marked",
+    "render",
+    "cli",
+    "terminal",
+    "console",
+    "markdown-to-terminal"
+  ],
+  "directories": {
+    "test": "tests"
+  },
+  "jest": {
+    "testMatch": [
+      "**/tests/*.js"
+    ]
+  },
+  "scripts": {
+    "lint": "eslint src tests",
+    "build": "babel src -d dist",
+    "start": "npm run -s build && node dist/cli.js",
+    "test": "jest",
+    "release": "babel src -d dist --presets 'minify'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bubuanabelas/markcat.git"
+  },
+  "author": "Joaquín Serna <bubuanabelas@cryptolab.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BubuAnabelas/markcat/issues"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-minify": "^0.2.0",
+    "eslint": "^4.15.0",
+    "jest": "^22.1.2"
+  },
+  "dependencies": {
+    "cardinal": "^1.0.0",
+    "chalk": "^2.3.0",
+    "cli-table": "^0.3.1",
+    "marked": "^0.3.12",
+    "node-emoji": "^1.8.1",
+    "yargs": "^10.1.1"
+  },
+  "homepage": "https://github.com/bubuanabelas/markcat"
+}
