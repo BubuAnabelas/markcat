@@ -7,7 +7,7 @@
 
 # markcat
 
-> Terminal Markdown viewer.
+> Markdown files terminal viewer.
 
 _Based on [marked-terminal](https://github.com/mikaelbr/marked-terminal)_
 
@@ -59,6 +59,6 @@ Opciones:
 
 [![asciicast](https://asciinema.org/a/xR59kF01pnzoKLpJ3OVbfyMlM.png)](https://asciinema.org/a/xR59kF01pnzoKLpJ3OVbfyMlM)
 
-# License
+## License
 
 [MIT License](https://oss.ninja/mit/bubuanabelas) © Joaquín Serna
