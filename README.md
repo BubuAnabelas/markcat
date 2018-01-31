@@ -38,21 +38,23 @@ $ markcat [filename]
 
 View Markdown files in the terminal
 
-Opciones:
-	--help               Show help
-	--version            Show version number
-	--no-gfm             Disable GitHub Flavored Markdown
-	--no-tables          Disable GFM tables. This option requires the gfm option
-											 to be true
-	--no-breaks          Disable GFM line breaks. This option requires the gfm
-											 option to be true
-	-p, --pedantic       Conform to original's markdown.pl as much as possible.
-											 Don't fix any of the original markdown bugs or poor
-											 behavior
-	-s, --sanitize       Sanitize the output. Ignore any HTML that has been input
-	-S, --no-smartlists  Use smarter list behavior than the original markdown
-	--smartypants        Use "smart" typographic punctuation for things like
-											 quotes and dashes
+Options:
+  --version            Show version number
+  --help               Show help
+  --no-gfm             Disable GitHub Flavored Markdown
+  --no-tables          Disable GFM tables. This option requires the gfm option
+                       to be true
+  --no-breaks          Disable GFM line breaks. This option requires the gfm
+                       option to be true
+  -p, --pedantic       Conform to original's markdown.pl as much as possible.
+                       Don't fix any of the original markdown bugs or poor
+                       behavior
+  -s, --sanitize       Sanitize the output. Ignore any HTML that has been input
+
+  -S, --no-smartlists  Use smarter list behavior than the original markdown
+
+  --smartypants        Use "smart" typographic punctuation for things like
+                       quotes and dashes
 ```
 
 ## Example
