@@ -87,7 +87,8 @@ export default class Renderer {
 	}
 
 	hr() {
-		return util.section(this.opts.hr(util.hr('-', this.opts.reflowText && this.opts.width)))
+		const length = this.opts.reflowText && this.opts.width ? this.opts.reflowText && this.opts.width : undefined
+		return util.section(this.opts.hr(util.hr('-', length)))
 	}
 
 	list(body, ordered) {
@@ -201,4 +202,3 @@ function compose () {
 		return args[0];
 	};
 }
-

@@ -1,6 +1,6 @@
 {
   "name": "markcat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "👓 Terminal Markdown viewer.",
   "main": "dist/index.js",
   "source": "src/index.js",
@@ -36,7 +36,7 @@
     "build": "babel src -d dist",
     "start": "npm run -s build && node dist/cli.js",
     "test": "jest",
-    "release": "babel src -d dist --presets 'minify'"
+    "release": "rimraf dist && babel src -d dist --presets 'minify'"
   },
   "repository": {
     "type": "git",
@@ -53,7 +53,8 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-minify": "^0.2.0",
     "eslint": "^4.15.0",
-    "jest": "^22.1.2"
+    "jest": "^22.1.2",
+    "rimraf": "^2.6.2"
   },
   "dependencies": {
     "cardinal": "^1.0.0",
