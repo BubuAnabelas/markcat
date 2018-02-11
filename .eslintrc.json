@@ -110,7 +110,7 @@
 			"error",
 			"always"
 		],
-		"max-depth": "error",
+		"max-depth": "off",
 		"max-len": "off",
 		"max-lines": "error",
 		"max-nested-callbacks": "error",
@@ -134,7 +134,7 @@
 		"no-caller": "error",
 		"no-catch-shadow": "error",
 		"no-confusing-arrow": "off",
-		"no-continue": "error",
+		"no-continue": "off",
 		"no-div-regex": "error",
 		"no-duplicate-imports": "error",
 		"no-else-return": "off",

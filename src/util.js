@@ -18,31 +18,33 @@ export const textLength = str => {
 }
 
 export const reflowText = (text, width, gfm) => {
-	const splitRe = gfm ? HARD_RETURN_GFM_RE : HARD_RETURN_RE
+	const splitRegex = gfm ? HARD_RETURN_GFM_RE : HARD_RETURN_RE
 
-	let textArray = text.split(splitRe).reduce((accumulator, section) => {
-		// Split the section by escape codes so that we can
-		// deal with them separately.
-		const fragments = section.split(/(\u001b\[(?:\d{1,3})(?:;\d{1,3})*m)/g);
-		let column = 0;
-		let currentLine = '';
-		let lastWasEscapeChar = false;
+	const sections = text.split(splitRegex)
+	const reflowed = []
 
-		let fragmentArray = fragments.reduce((accumulator, fragment) => {
+	for (let section of sections) {
+		const fragments = section.split(/(\u001b\[(?:\d{1,3})(?:;\d{1,3})*m)/g)
+		let column = 0
+		let currentLine = ''
+		let lastWasEscapeChar = false
+		for (let fragment of fragments) {
 			if (fragment === '') {
 				lastWasEscapeChar = false
-				return accumulator;
+				continue
 			}
 
 			// This is an escape code - leave it whole and
 			// move to the next fragment.
 			if (!textLength(fragment)) {
 				currentLine = `${currentLine}${fragment}`
-				lastWasEscapeChar = true;
-				return accumulator;
+				lastWasEscapeChar = true
+				continue
 			}
 
-			let wordArray = fragment.split(/[ \t\n]+/).reduce((accumulator, word) => {
+			const words = fragment.split(/[ \t\n]+/)
+
+			for (let word of words) {
 				let addSpace = column != 0
 				if (lastWasEscapeChar) addSpace = false;
 
@@ -51,68 +53,53 @@ export const reflowText = (text, width, gfm) => {
 					if (word.length <= width) {
 						// If the new word is smaller than the required width
 						// just add it at the beginning of a new line
-						currentLine = word;
-						column = word.length;
-						lastWasEscapeChar = false;
-						accumulator.push(currentLine);
+						reflowed.push(currentLine)
+						currentLine = word
+						column = word.length
 					} else {
 						// If the new word is longer than the required width
 						// split this word into smaller parts.
 						let firstWord = word.substr(0, width - column - addSpace)
-						if (column !== 0) currentLine = `${currentLine} `
+						if (addSpace) currentLine = `${currentLine} `;
 						currentLine = `${currentLine}${firstWord}`
-						accumulator.push(currentLine)
+						reflowed.push(currentLine)
 
 						currentLine = ''
 						column = 0
 
 						word = word.substr(firstWord.length)
-
 						const words = word.match(new RegExp(`.{1,${width}}`, 'g'))
-
-						let newWords = words.reduce((accumulator, word) => {
-							if (word.length < width) {
-								currentLine = word
-								column = word.length
-							} else {
-								accumulator.push(word)
+						for (let word of words) {
+							if (word.length) {
+								if (column + word.length < width) {
+									currentLine = `${currentLine}${word}`
+									column += word.length
+								} else {
+									currentLine = ''
+									column = 0
+									reflowed.push(word)
+								}
 							}
-
-							return accumulator
-						}, [])
-
-						accumulator.push(...newWords)
+						}
 					}
 				} else {
-					if (column !== 0) {
+					if (addSpace) {
 						currentLine = `${currentLine} `
-						column++;
+						column++
 					}
 
 					currentLine = `${currentLine}${word}`
-					column = `${column}${word.length}`
+					column += word.length
 				}
 
-				lastWasEscapeChar = false;
+				lastWasEscapeChar = false
+			}
+		}
 
-				return accumulator
+		if (textLength(currentLine)) reflowed.push(currentLine)
+	}
 
-			}, [])
-
-			accumulator.push(...wordArray)
-
-			return accumulator
-
-		}, [])
-
-		accumulator.push(...fragmentArray)
-		accumulator.push(currentLine)
-
-		return accumulator
-
-	}, [])
-
-	return textArray.join('\n')
+	return reflowed.join('\n')
 }
 
 export const fixHardReturn = (text, reflow) => reflow ? text.replace(HARD_RETURN, /\n/g) : text
