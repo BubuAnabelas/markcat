@@ -5,7 +5,7 @@ install:
   - yarn
 script:
   - npm run -s lint
-  - npm run build
   - npm run test
+  - npm run build
 notifications:
   email: false

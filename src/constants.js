@@ -16,7 +16,7 @@ export const TAB_ALLOWED_CHARACTERS = ['\t']
 // to indicate a hard (non-reflowed) return.
 export const HARD_RETURN = '\r'
 export const HARD_RETURN_RE = new RegExp(HARD_RETURN)
-export const HARD_RETURN_GFM_RE = new RegExp(`${HARD_RETURN}|<br />`)
+export const HARD_RETURN_GFM_RE = new RegExp(`${HARD_RETURN}|<br ?/?>`)
 
 
 export const BULLET_POINT_REGEX = '\\*'

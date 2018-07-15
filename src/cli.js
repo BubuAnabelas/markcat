@@ -72,4 +72,3 @@ if (!cli.filename || !existsSync(cli.filename)) {
 const file = readFileSync(cli.filename).toString()
 
 process.stdout.write(marked(file))
-process.stdout.write('\n')

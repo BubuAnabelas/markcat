@@ -1,8 +1,8 @@
 'use strict'
 
-import chalk from 'chalk'
 import Table from 'cli-table'
 
+import defaultOptions from './options'
 import * as util from './util'
 import {
 	TABLE_CELL_SPLIT,
@@ -11,34 +11,6 @@ import {
 	HARD_RETURN,
 	BULLET_POINT
 } from './constants'
-
-const defaultOptions = {
-	code: chalk.yellow,
-	blockquote: chalk.gray.italic,
-	html: chalk.gray,
-	heading: chalk.green.bold,
-	firstHeading: chalk.magenta.underline.bold,
-	hr: chalk.reset,
-	listitem: chalk.reset,
-	list: util.list,
-	table: chalk.reset,
-	paragraph: chalk.reset,
-	strong: chalk.bold,
-	em: chalk.italic,
-	codespan: chalk.yellow,
-	del: chalk.dim.gray.strikethrough,
-	link: chalk.blue,
-	href: chalk.blue.underline,
-	text: util.identity,
-	unescape: true,
-	emoji: true,
-	width: 80,
-	showSectionPrefix: true,
-	reflowText: false,
-	tab: 4,
-	tableOptions: {}
-};
-
 
 export default class Renderer {
 	constructor(options = {}, highlightOptions = {}) {
@@ -189,8 +161,6 @@ export default class Renderer {
 		return `${out}](${href})\n`
 	}
 }
-
-
 
 function compose () {
 	var funcs = arguments;
