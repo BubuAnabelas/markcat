@@ -21,7 +21,8 @@ export default class Renderer {
 		this.unescape = this.opts.unescape ? util.unescapeEntities : util.identity
 		this.highlightOptions = highlightOptions
 
-		this.transform = compose(util.undoColon, this.unescape, this.emoji)
+		// Pipes the given argument through the given functions
+		this.transform = _ => _ |> this.emoji |> this.unescape |> util.undoColon
 	}
 
 	textLength(str) {
@@ -29,7 +30,7 @@ export default class Renderer {
 	}
 
 	text(text) {
-		return this.opts.text(text)
+		return text |> this.opts.text
 	}
 
 	code(code, lang) {
@@ -40,11 +41,14 @@ export default class Renderer {
 	}
 
 	blockquote(quote) {
-		return util.section(this.opts.blockquote(util.indentify(util.sanitizeTab(this.opts.tab), quote.trim())))
+		return util.sanitizeTab(this.opts.tab)
+			|> (_ => util.indentify(_, quote.trim()))
+			|> this.opts.blockquote
+			|> util.section
 	}
 
 	html(html) {
-		return this.opts.html(html)
+		return html |> this.opts.html
 	}
 
 	heading(text, level) {
@@ -60,30 +64,31 @@ export default class Renderer {
 
 	hr() {
 		const length = this.opts.reflowText && this.opts.width ? this.opts.reflowText && this.opts.width : undefined
-		return util.section(this.opts.hr(util.hr('-', length)))
+		return util.hr('-', length) |> this.opts.hr |> util.section
 	}
 
 	list(body, ordered) {
 		body = this.opts.list(body, ordered, this.tab)
-		return util.section(util.fixNestedLists(util.indentLines(this.tab, body), this.tab))
+		return util.indentLines(this.tab, body)
+			|> (_ => util.fixNestedLists(_, this.tab))
+			|> util.section
 	}
 
 	listitem(text) {
-		const transform = compose(this.opts.listitem, this.transform)
-		const isNested = text.indexOf('\n') !== -1
-		if (isNested) text = text.trim();
+		if (text.includes('\n')) text = text.trim();
 
+		text = text |> this.transform |> this.opts.listitem
 		// Use BULLET_POINT as a marker for ordered or unordered list item
-		return `\n${BULLET_POINT}${transform(text)}`
+		return `\n${BULLET_POINT}${text}`
 	}
 
 	paragraph(text) {
-		const transform = compose(this.opts.paragraph, this.transform)
-		text = transform(text)
+		text = text |> this.transform |> this.opts.paragraph
+
 		if (this.opts.reflowText) {
 			text = util.reflowText(text, this.opts.width, this.options.gfm)
 		}
-		return util.section(text)
+		return text |> util.section
 	}
 
 	table(header, body) {
@@ -91,28 +96,27 @@ export default class Renderer {
 			head: util.generateTableRow(header)[0]
 		}, this.tableSettings))
 
-		util.generateTableRow(body, this.transform).forEach(row => {
-			table.push(row)
-		})
-		return util.section(this.opts.table(table.toString()))
+		const rows = util.generateTableRow(body, this.transform)
+		for (let row of rows) table.push(row);
+
+		return table.toString() |> this.opts.table |> util.section
 	}
 
 	tablerow(content) {
-		return TABLE_ROW_WRAP + content + TABLE_ROW_WRAP + '\n'
+		return `${TABLE_ROW_WRAP}${content}${TABLE_ROW_WRAP}\n`
 	}
 
 	tablecell(content, flags) {
-		return content + TABLE_CELL_SPLIT
+		return `${content}${TABLE_CELL_SPLIT}`
 	}
 
 	// span level renderer
 	strong(text) {
-		return this.opts.strong(text)
+		return text |> this.opts.strong
 	}
 
 	em(text) {
-		text = util.fixHardReturn(text, this.opts.reflowText)
-		return this.opts.em(text)
+		return util.fixHardReturn(text, this.opts.reflowText) |> this.opts.em
 	}
 
 	codespan(text) {
@@ -125,7 +129,7 @@ export default class Renderer {
 	}
 
 	del(text) {
-		return this.opts.del(text)
+		return text |> this.opts.del
 	}
 
 	link(href, title, text) {
@@ -160,15 +164,4 @@ export default class Renderer {
 
 		return `${out}](${href})\n`
 	}
-}
-
-function compose () {
-	var funcs = arguments;
-	return function() {
-		var args = arguments;
-		for (var i = funcs.length; i-- > 0;) {
-			args = [funcs[i].apply(this, args)];
-		}
-		return args[0];
-	};
 }

@@ -1,104 +1,119 @@
+import { identity } from '../src/util'
+import Renderer from '../src/'
+import marked from 'marked'
 
-var assert = require('assert');
-var Renderer = require('../dist/');
-var marked = require('marked');
+const options = [
+	'code', 'blockquote', 'html', 'heading',
+	'firstHeading', 'hr', 'listitem', 'table',
+	'paragraph', 'strong', 'em', 'codespan',
+	'del', 'link', 'href'
+]
 
+const defaultOptions = {}
+for (let option of options) {
+	defaultOptions[option] = identity
+}
 
-var identity = function (o) {
-  return o;
-};
+const toMarkdown = (text, renderer) => marked(text, { renderer: renderer })
 
-var opts = [
-  'code', 'blockquote', 'html', 'heading',
-  'firstHeading', 'hr', 'listitem', 'table',
-  'paragraph', 'strong', 'em', 'codespan',
-  'del', 'link', 'href'
-];
+describe('options', () => {
+	const renderer = new Renderer(defaultOptions)
 
-var defaultOptions = {};
-opts.forEach(function (opt) {
-  defaultOptions[opt] = identity;
-});
+	describe('emojis', () => {
+		const emojiText = 'Hello :smile:'
 
-defaultOptions.emoji = false;
+		test('should not translate emojis', () => {
+			const options = Object.assign({}, defaultOptions, { emoji: false })
+			const renderer = new Renderer(options)
 
-describe('Options', function () {
-  var r = new Renderer(defaultOptions);
+			expect(toMarkdown(emojiText, renderer)).toEqual(expect.stringContaining('Hello :smile:'))
+		})
 
-  it('should not translate emojis', function () {
-    var markdownText = 'Some :emoji:';
+		test('should translate emojis', () => {
+			const options = Object.assign({}, defaultOptions, { emoji: true })
+			const renderer = new Renderer(options)
 
-    assert.notEqual(marked(markdownText, {
-      renderer: r
-    }).indexOf(':emoji:'), -1);
-  });
+			expect(toMarkdown(emojiText, renderer)).toEqual(expect.stringContaining('Hello 😄'))
+		})
+	})
 
-  it('should change tabs by space size', function () {
-    var options = Object.assign({}, defaultOptions, { tab: 4 });
-    var r = new Renderer(options);
+	describe('tabs', () => {
+		const blockquoteText = '> Blockquote'
+		const listText = '* List Item'
 
-    var blockquoteText = '> Blockquote'
-    assert.equal(
-      marked(blockquoteText, { renderer: r }),
-      '    Blockquote\n\n'
-    );
+		describe('should change tabs by space size', () => {
+			const options = Object.assign({}, defaultOptions, { tab: 4 })
+			const renderer = new Renderer(options)
 
-    var listText = '* List Item'
-    assert.equal(
-      marked(listText, { renderer: r }),
-      '    * List Item\n\n'
-    );
-  });
+			test('blockquote tabs', () => {
+				expect(toMarkdown(blockquoteText, renderer)).toEqual(expect.stringContaining('    Blockquote\n\n'))
+			})
 
-  it('should use default tabs if passing not supported string', function () {
-    var options = Object.assign({}, defaultOptions, { tab: 'dsakdskajhdsa' });
-    var r = new Renderer(options);
+			test('list tabs', () => {
+				expect(toMarkdown(listText, renderer)).toEqual(expect.stringContaining('    * List Item\n\n'))
+			})
 
-    var blockquoteText = '> Blockquote'
-    assert.equal(
-      marked(blockquoteText, { renderer: r }),
-      '    Blockquote\n\n'
-    );
+			test('numered list', () => {
+				expect(toMarkdown('1. Number one', renderer)).toEqual(expect.stringContaining('    1. Number one\n\n'))
+			})
+		})
 
-    var listText = '* List Item'
-    assert.equal(
-      marked(listText, { renderer: r }),
-      '    * List Item\n\n'
-    );
-  });
+		describe('should use default tabs if passing not supported string', () => {
+			const options = Object.assign({}, defaultOptions, { tab: 'aaaa' })
+			const renderer = new Renderer(options)
 
-  it('should change tabs by allowed characters', function () {
-    var options = Object.assign({}, defaultOptions, { tab: '\t' });
-    var r = new Renderer(options);
+			test('blockquote tabs', () => {
+				expect(toMarkdown(blockquoteText, renderer)).toEqual(expect.stringContaining('    Blockquote\n\n'))
+			})
 
-    var blockquoteText = '> Blockquote'
-    assert.equal(
-      marked(blockquoteText, { renderer: r }),
-      '\tBlockquote\n\n'
-    );
+			test('list tabs', () => {
+				expect(toMarkdown(listText, renderer)).toEqual(expect.stringContaining('    * List Item\n\n'))
+			})
+		})
 
-    var listText = '* List Item'
-    assert.equal(
-      marked(listText, { renderer: r }),
-      '\t* List Item\n\n'
-    );
-  });
+		describe('should change tabs by allowed characters', () => {
+			const options = Object.assign({}, defaultOptions, { tab: '\t' })
+			const renderer = new Renderer(options)
 
-  it('should support mulitple tab characters', function () {
-    var options = Object.assign({}, defaultOptions, { tab: '\t\t' });
-    var r = new Renderer(options);
+			test('blockquote tabs', () => {
+				expect(toMarkdown(blockquoteText, renderer)).toEqual(expect.stringContaining('\tBlockquote\n\n'))
+			})
 
-    var blockquoteText = '> Blockquote'
-    assert.equal(
-      marked(blockquoteText, { renderer: r }),
-      '\t\tBlockquote\n\n'
-    );
+			test('list tabs', () => {
+				expect(toMarkdown(listText, renderer)).toEqual(expect.stringContaining('\t* List Item\n\n'))
+			})
+		})
 
-    var listText = '* List Item'
-    assert.equal(
-      marked(listText, { renderer: r }),
-      '\t\t* List Item\n\n'
-    );
-  });
+		describe('should support mulitple tab characters', () => {
+			const options = Object.assign({}, defaultOptions, { tab: '\t\t' })
+			const renderer = new Renderer(options)
 
-});
+			test('blockquote tabs', () => {
+				expect(toMarkdown(blockquoteText, renderer)).toEqual(expect.stringContaining('\t\tBlockquote\n\n'))
+			})
+
+			test('list tabs', () => {
+				expect(toMarkdown(listText, renderer)).toEqual(expect.stringContaining('\t\t* List Item\n\n'))
+			})
+		})
+	})
+
+	describe('escaping characters', () => {
+		const escapeText = '"Hello"'
+
+		test('should not escape some characters', () => {
+			const options = Object.assign({}, defaultOptions, { unescape: true })
+			const renderer = new Renderer(options)
+
+			expect(toMarkdown(escapeText, renderer)).toEqual(expect.stringContaining(escapeText))
+		})
+
+		test('should escape some characters', () => {
+			const options = Object.assign({}, defaultOptions, { unescape: false })
+			const renderer = new Renderer(options)
+
+			expect(toMarkdown(escapeText, renderer)).toEqual(expect.stringContaining('&quot;Hello&quot;'))
+		})
+
+	})
+})

@@ -1,8 +1,10 @@
 {
   "presets": [
-    ["env", {
+    ["@babel/preset-env", {
       "targets": 8
     }]
   ],
-  "plugins": ["add-module-exports"]
+  "plugins": [["@babel/plugin-proposal-pipeline-operator", {
+  	"proposal": "minimal"
+  }]]
 }

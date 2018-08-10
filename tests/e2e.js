@@ -2,7 +2,7 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
-var Renderer = require('../dist/');
+var Renderer = require('../src/');
 var marked = require('marked');
 
 

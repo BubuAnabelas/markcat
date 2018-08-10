@@ -32,7 +32,7 @@
     ]
   },
   "scripts": {
-    "lint": "eslint src tests",
+    "lint": "eslint src",
     "build": "babel src -d dist",
     "start": "npm run -s build && node dist/cli.js",
     "test": "jest",
@@ -48,21 +48,24 @@
     "url": "https://github.com/BubuAnabelas/markcat/issues"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-minify": "^0.2.0",
+    "@babel/cli": "^7.0.0-rc.1",
+    "@babel/core": "^7.0.0-rc.1",
+    "@babel/node": "^7.0.0-rc.1",
+    "@babel/plugin-proposal-pipeline-operator": "^7.0.0-rc.1",
+    "@babel/preset-env": "^7.0.0-rc.1",
+    "babel-preset-minify": "^0.4.3",
     "eslint": "^4.15.0",
     "jest": "^22.1.2",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "std-mocks": "^1.0.1"
   },
   "dependencies": {
-    "cardinal": "^1.0.0",
+    "cardinal": "^2.1.1",
     "chalk": "^2.3.0",
     "cli-table": "^0.3.1",
-    "marked": "^0.3.12",
+    "marked": "^0.4.0",
     "node-emoji": "^1.8.1",
-    "yargs": "^10.1.1"
+    "yargs": "^12.0.1"
   },
   "homepage": "https://github.com/bubuanabelas/markcat"
 }
