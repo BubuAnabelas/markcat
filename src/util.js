@@ -13,9 +13,7 @@ import {
 	BULLET_POINT
 } from './constants'
 
-export const textLength = str => {
-	return str.replace(/\u001b\[(?:\d{1,3})(?:;\d{1,3})*m/g, "").length
-}
+export const textLength = str => str.replace(/\u001b\[(?:\d{1,3})(?:;\d{1,3})*m/g, "").length
 
 export const reflowText = (text, width, gfm) => {
 	const splitRegex = gfm ? HARD_RETURN_GFM_RE : HARD_RETURN_RE
@@ -120,37 +118,29 @@ export const section = text => `${text}\n\n`
 // Prevents nested lists from joining their parent list's last line
 export const fixNestedLists = (body, indent) => {
 	const regex = new RegExp(`(\\S(?: |  )?)((?:${indent})+)(${POINT_REGEX}(?:.*)+)$`, 'm')
-	return body.replace(regex, '$1\n' + indent + '$2$3');
+	return body.replace(regex, '$1\n' + indent + '$2$3')
 }
 
-export const isPointedLine = (line, indent) => line.match(`^(?:${indent})*` + POINT_REGEX);
+export const isPointedLine = (line, indent) => line.match(`^(?:${indent})*` + POINT_REGEX)
 
-export const toSpaces = (str) => (' ').repeat(str.length);
+export const toSpaces = (str) => (' ').repeat(str.length)
 
-export const list = (body, ordered, indent) => {
-	body = body.trim()
-	return ordered ? numberedLines(body, indent) : bulletPointLines(body, indent);
-}
+export const list = (body, ordered, indent) => ordered ? numberedLines(body.trim(), indent) : bulletPointLines(body.trim(), indent)
 
-export const bulletPointLine = (indent, line) => {
-	return isPointedLine(line, indent) ? line : toSpaces(BULLET_POINT) + line;
-}
+export const bulletPointLine = (indent, line) => isPointedLine(line, indent) ? line : `${toSpaces(BULLET_POINT)}${line}`
 
-export const bulletPointLines = (lines, indent) => {
-	const transform = bulletPointLine.bind(null, indent)
-	return lines.split('\n').filter(identity).map(transform).join('\n')
-}
+
+export const bulletPointLines = (lines, indent) => lines.split('\n').filter(identity).map(line => bulletPointLine(indent, line)).join('\n')
 
 export const numberedPoint = n => `${n}. `
 
-export const numberedLine = (indent, line, num) => isPointedLine(line, indent) ? { num: num+1, line: line.replace(BULLET_POINT, numberedPoint(num+1)) } : { num: num, line: toSpaces(numberedPoint(num)) + line };
+export const numberedLine = (indent, line, num) => isPointedLine(line, indent) ? { num: num+1, line: line.replace(BULLET_POINT, numberedPoint(num+1)) } : { num: num, line: toSpaces(numberedPoint(num)) + line }
 
 export const numberedLines = (lines, indent) => {
-	const transform = numberedLine.bind(null, indent)
 	let num = 0
 	return lines.split('\n').filter(identity).map(line => {
-		const numbered = transform(line, num)
-		num = numbered.num;
+		const numbered = numberedLine(indent, line, num)
+		num = numbered.num
 
 		return numbered.line
 	}).join('\n')
@@ -179,9 +169,7 @@ export const insertEmojis = text => text.replace(/:([A-Za-z0-9_\-+]+?):/g, emoji
 })
 
 
-export const hr = (inputHrStr, length = process.stdout.columns) => {
-	return (new Array(length)).join(inputHrStr);
-}
+export const hr = (inputHrStr, length = process.stdout.columns) => (new Array(length)).join(inputHrStr)
 
 export const undoColon = str => str.replace(COLON_REPLACER_REGEXP, ':')
 
@@ -192,12 +180,12 @@ export const generateTableRow = (text, escape = identity) => {
 
 	const data = []
 
-	lines.forEach(line => {
-		if (!line) return;
-		const parsed = line.replace(TABLE_ROW_WRAP_REGEXP, '').split(TABLE_CELL_SPLIT)
-
-		data.push(parsed.splice(0, parsed.length - 1))
-	})
+	for (let line of lines) {
+		if (line) {
+			const parsed = line.replace(TABLE_ROW_WRAP_REGEXP, '').split(TABLE_CELL_SPLIT)
+			data.push(parsed.splice(0, parsed.length - 1))
+		}
+	}
 
 	return data
 }
@@ -207,11 +195,11 @@ export const isAllowedTabString = string => TAB_ALLOWED_CHARACTERS.some(char => 
 export const sanitizeTab = (tab = 4) => {
 	if (typeof tab === 'string') {
 		if (isAllowedTabString(tab)) {
-			return tab;
+			return tab
 		}
 
 		tab = 4
 	}
 
-	return (new Array(tab + 1)).join(' ');
+	return (new Array(tab + 1)).join(' ')
 }

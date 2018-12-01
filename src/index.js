@@ -14,8 +14,8 @@ import {
 
 export default class Renderer {
 	constructor(options = {}, highlightOptions = {}) {
-		this.opts = Object.assign({}, defaultOptions, options)
-		this.tab = util.sanitizeTab(this.opts.tab)
+		this.opts = { ...defaultOptions, ...options }
+		this.tab = this.opts.tab |> util.sanitizeTab
 		this.tableSettings = this.opts.tableOptions
 		this.emoji = this.opts.emoji ? util.insertEmojis : util.identity
 		this.unescape = this.opts.unescape ? util.unescapeEntities : util.identity
@@ -52,14 +52,15 @@ export default class Renderer {
 	}
 
 	heading(text, level) {
-		text = this.transform(text)
+		text = text |> this.transform
 
 		const prefix = this.opts.showSectionPrefix ? `${new Array(level + 1).join('#')} ` : ''
 		text = `${prefix}${text}`
 		if (this.opts.reflowText) {
 			text = util.reflowText(text, this.opts.width, this.options.gfm)
 		}
-		return util.section(level === 1 ? this.opts.firstHeading(text) : this.opts.heading(text))
+
+		return text |> (level === 1 ? this.opts.firstHeading : this.opts.heading) |> util.section
 	}
 
 	hr() {
@@ -92,9 +93,7 @@ export default class Renderer {
 	}
 
 	table(header, body) {
-		const table = new Table(Object.assign({}, {
-			head: util.generateTableRow(header)[0]
-		}, this.tableSettings))
+		const table = new Table({ head: util.generateTableRow(header)[0], ...this.tableSettings })
 
 		const rows = util.generateTableRow(body, this.transform)
 		for (let row of rows) table.push(row);
@@ -156,12 +155,6 @@ export default class Renderer {
 	}
 
 	image(href, title, text) {
-		let out = `![${text}`
-
-		if (title) {
-			out = `${out} – ${title}`
-		}
-
-		return `${out}](${href})\n`
+		return `![${text}${title ? ` – ${title}` : ''}](${href})\n`
 	}
 }

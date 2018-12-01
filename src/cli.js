@@ -62,7 +62,7 @@ const defaultOptions = opts({
 	smartypants: cli.smartypants
 })
 
-marked.setOptions(Object.assign(defaultOptions, { renderer: new TerminalRenderer() }));
+marked.setOptions({ ...defaultOptions, renderer: new TerminalRenderer() });
 
 if (!cli.filename || !existsSync(cli.filename)) {
 	process.stderr.write(`File doesn't exist\n`)
