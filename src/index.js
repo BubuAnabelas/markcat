@@ -26,7 +26,7 @@ export default class Renderer {
 	}
 
 	textLength(str) {
-		return str.replace(/\u001b\[(?:\d{1,3})(?:;\d{1,3})*m/g, "").length
+		return str |> util.textLength
 	}
 
 	text(text) {

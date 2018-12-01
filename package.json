@@ -53,6 +53,7 @@
     "@babel/node": "^7.0.0-rc.1",
     "@babel/plugin-proposal-pipeline-operator": "^7.0.0-rc.1",
     "@babel/preset-env": "^7.0.0-rc.1",
+    "babel-eslint": "8",
     "babel-preset-minify": "^0.4.3",
     "eslint": "^4.15.0",
     "jest": "^22.1.2",
