@@ -1,6 +1,6 @@
 {
   "name": "markcat",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "description": "👓 Terminal Markdown viewer.",
   "main": "dist/index.js",
   "source": "src/index.js",
